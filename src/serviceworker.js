@@ -1,6 +1,9 @@
 import { manifest, version } from '@parcel/service-worker';
 import { precacheAndRoute } from 'workbox-precaching';
 
+// Disable sw logs
+self.__WB_DISABLE_DEV_LOGS = true;
+
 precacheAndRoute(
     manifest.map(urlPath => {
         let revision = null;

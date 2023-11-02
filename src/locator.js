@@ -7,9 +7,17 @@ const DEG_FORMATTER = Intl.NumberFormat('de-DE', { minimumFractionDigits: 1, max
 const LOCATION_ID = 'location';
 const CAMERA_INPUT_ID = 'camera';
 
+const cameraButton = document.getElementById(CAMERA_INPUT_ID);
+
+cameraButton.addEventListener("click", function () {
+    location.href = "camera.html";
+})
+
 //map state
 var map;
 var ranger;
+var geolocation;
+var watchID;
 
 function isTouchDevice() {
     return (('ontouchstart' in window) ||
@@ -35,6 +43,7 @@ function updatePosition(position) {
     const locatorDiv = document.getElementById(LOCATION_ID);
 
     const coords = position.coords;
+
     console.debug(`got new coordinates: ${coords}`);
     locatorDiv.innerHTML = `
         <dl>
@@ -53,6 +62,8 @@ function updatePosition(position) {
         </dl>
     `;
     var ll = [coords.latitude, coords.longitude];
+    localStorage.setItem("last-coords", JSON.stringify(ll));
+    console.debug(`New coordinates: ${ll}`);
 
     map.setView(ll);
 
@@ -60,10 +71,18 @@ function updatePosition(position) {
     ranger.setRadius(coords.accuracy);
 }
 
+function locate(position) {
+    const c = position.coords;
+    console.debug(
+        `my position: lat=${c.latitude} lng=${c.longitude}`);
+}
+
+function handleErr(err) {
+    console.error(err.message);
+}
+
 /* setup component */
 window.onload = () => {
-    const cameraButton = document.getElementById(CAMERA_INPUT_ID);
-
     //setup UI
     cameraButton.src = cameraImage;
 
@@ -86,4 +105,23 @@ window.onload = () => {
         });
     }
 
+    const options = {
+        enableHighAccuracy: true,
+        maximumAge: 30000,
+        timeout: 27000
+    };
+
+    if ('geolocation' in navigator) {
+        /* geolocation is available */
+        geolocation = navigator.geolocation;
+        watchID = geolocation.watchPosition(
+            updatePosition, handleErr, options);
+    }
+
 }
+
+window.onbeforeunload = (event) => {
+    if (geolocation) {
+        geolocation.clearWatch(watchID);
+    }
+};

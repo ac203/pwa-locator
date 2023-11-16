@@ -14,18 +14,29 @@ const playPauseButton = document.getElementById("playPauseButton");
 const saveButton = document.getElementById("save");
 const cancelButton = document.getElementById("cancel");
 
+const reader = new FileReader();
+
 let isPaused = false;
+let latitude;
+let longitude;
+let canvasImgBlob;
+
 
 //start video playback
-navigator.mediaDevices.getUserMedia(
-    { video: true, audio: false })
-    .then((stream) => {
-        video.srcObject = stream;
-        video.play();
-    })
-    .catch((err) => {
-        console.error(`An error occurred: ${err}`);
-    });
+async function startVideoPlayback() {
+    navigator.mediaDevices.getUserMedia(
+        { video: true, audio: false })
+        .then((stream) => {
+            video.srcObject = stream;
+            video.play();
+        })
+        .catch((err) => {
+            console.error(`An error occurred: ${err}`);
+        });
+
+    video.style.display = "block";
+    photo.style.display = "none";
+}
 
 function adjustAspectRations(event) {
     //perform a one-time adjustment of video's and photo's aspect ratio
@@ -37,8 +48,6 @@ function adjustAspectRations(event) {
 
         video.setAttribute('width', width);
         video.setAttribute('height', height);
-        canvas.setAttribute('width', width);
-        canvas.setAttribute('height', height);
         streaming = true;
     }
 }
@@ -53,46 +62,36 @@ function takePicture(event) {
     const context = canvas.getContext('2d');
     context.drawImage(video, 0, 0, width, height);
 
-    let canvasImgBlob;
-    let imageData;
     canvas.convertToBlob({ type: 'image/jpeg' }).then(
         (blob) => {
             canvasImgBlob = blob;
-            imageData = URL.createObjectURL(blob);
-            photoImg.width = width;
-            photoImg.height = height;
-            photoImg.src = imageData;
+            const imageData = URL.createObjectURL(blob);
+            console.log(imageData);
+            photo.width = width;
+            photo.height = height;
+            photo.src = imageData;
         }
     );
 
-    const reader = new FileReader();
-
-    reader.onloadend = function () {
-        localStorage.setItem('my-image', reader.result);
-    };
-
-    reader.readAsDataURL(canvasImgBlob);
-
-    // photo.setAttribute('src', );
+    video.style.display = "none";
+    photo.style.display = "block";
 }
 
 function toggleButtons(isPaused) {
     if (isPaused) {
         playPauseButton.src = playButtonImage;
         saveButton.disabled = false;
-        canvas.hidden = false;
-        photo.hidden = false;
         video.hidden = true;
+        photo.hidden = false;
     } else {
         playPauseButton.src = pauseButtonImage;
         saveButton.disabled = true;
-        canvas.hidden = true;
-        photo.hidden = true;
         video.hidden = false;
+        photo.hidden = true;
     }
 }
 
-playPauseButton.addEventListener("click", function () {
+playPauseButton.addEventListener("click", async function () {
     console.debug("Clicked play-pause-button");
     if (!isPaused) {
         video.pause();
@@ -100,6 +99,7 @@ playPauseButton.addEventListener("click", function () {
         toggleButtons(isPaused);
         takePicture();
     } else {
+        await startVideoPlayback();
         video.play();
         isPaused = false;
         toggleButtons(isPaused);
@@ -108,14 +108,32 @@ playPauseButton.addEventListener("click", function () {
 
 saveButton.addEventListener("click", function () {
     // save to local storage
+    const queryString = window.location.search;
+    const urlParams = new URLSearchParams(queryString);
+
+    latitude = urlParams.get("lat");
+    longitude = urlParams.get("lon");
+
+    console.log("Lat: ", latitude);
+    console.log("Lon: ", longitude);
+
+    reader.readAsDataURL(canvasImgBlob);
+
+
 })
 
 cancelButton.addEventListener("click", function () {
     location.href = "index.html";
 })
 
-window.onload = () => {
+window.onload = async () => {
     playPauseButton.src = pauseButtonImage;
     saveButton.src = saveButtonImage;
     cancelButton.src = cancelButtonImage;
+
+    reader.onloadend = function () {
+        localStorage.setItem(latitude + 'x' + longitude, reader.result);
+    };
+
+    await startVideoPlayback();
 }

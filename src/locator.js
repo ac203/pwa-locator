@@ -1,5 +1,15 @@
 import cameraImage from './camera.svg';
 
+import marker2x from 'leaflet/dist/images/marker-icon-2x.png';
+import marker from 'leaflet/dist/images/marker-icon.png';
+import markerShadow from 'leaflet/dist/images/marker-shadow.png';
+
+const markerIcon = new L.Icon.Default({
+    iconUrl: marker,
+    iconRetinaUrl: marker2x,
+    shadowUrl: markerShadow
+});
+
 const COORD_FORMATTER = Intl.NumberFormat('de-DE', { minimumFractionDigits: 6, maximumFractionDigits: 6, minimumIntegerDigits: 3, style: 'unit', unit: 'degree' });
 const DIST_FORMATTER = Intl.NumberFormat('de-DE', { minimumFractionDigits: 1, maximumFractionDigits: 1, style: 'unit', unit: 'meter' });
 const DEG_FORMATTER = Intl.NumberFormat('de-DE', { minimumFractionDigits: 1, maximumFractionDigits: 1, style: 'unit', unit: 'degree' });
@@ -10,7 +20,7 @@ const CAMERA_INPUT_ID = 'camera';
 const cameraButton = document.getElementById(CAMERA_INPUT_ID);
 
 cameraButton.addEventListener("click", function () {
-    location.href = "camera.html";
+    location.href = `camera.html?lat=${ll[0]}&lon=${ll[1]}`;
 })
 
 //map state
@@ -18,6 +28,7 @@ var map;
 var ranger;
 var geolocation;
 var watchID;
+var ll;
 
 function isTouchDevice() {
     return (('ontouchstart' in window) ||
@@ -61,7 +72,7 @@ function updatePosition(position) {
             <dd>${coords.speed ? DIST_FORMATTER.format(coords.speed) : '-'}</dd>
         </dl>
     `;
-    var ll = [coords.latitude, coords.longitude];
+    ll = [coords.latitude, coords.longitude];
     localStorage.setItem("last-coords", JSON.stringify(ll));
     console.debug(`New coordinates: ${ll}`);
 
@@ -117,6 +128,17 @@ window.onload = () => {
         watchID = geolocation.watchPosition(
             updatePosition, handleErr, options);
     }
+
+    Object.keys(localStorage).forEach(function (key) {
+        let image = localStorage.getItem(key);
+        let location = key.split("x");
+        let marker = L.marker(location, {icon: markerIcon}).addTo(map);
+
+        marker.bindPopup(
+            "<img src=" + image + " width=100px>" +
+            "<p>" + location[0] + " " + location[1] + " </p>"
+        ).openPopup();
+    })
 
 }
 

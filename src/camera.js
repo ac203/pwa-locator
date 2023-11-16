@@ -88,7 +88,6 @@ function addLocationToImage(context, video) {
     console.log("Lat: ", latitude);
     console.log("Lon: ", longitude);
 
-
     context.drawImage(video, 0, 0, width, height);
 
     const text = "Latitude: " + latitude + ", Longitude: " + longitude;
@@ -109,15 +108,6 @@ function addLocationToImage(context, video) {
     context.fillStyle = 'black';
     context.fillText(text, width / 2, height - backgroundMargin, width);
 
-
-    /*
-    context.fillStyle = 'rgba(0, 255, 0, 0.5)';
-    context.beginPath();
-    context.moveTo(25, 25);
-    context.lineTo(105, 25);
-    context.lineTo(25, 105);
-    context.fill();
-     */
 }
 
 function toggleButtons(isPaused) {
@@ -143,7 +133,6 @@ playPauseButton.addEventListener("click", async function () {
         takePicture();
     } else {
         await startVideoPlayback();
-        video.play();
         isPaused = false;
         toggleButtons(isPaused);
     }

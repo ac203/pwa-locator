@@ -17,10 +17,10 @@ const cancelButton = document.getElementById("cancel");
 const reader = new FileReader();
 
 let isPaused = false;
+
 let latitude;
 let longitude;
 let canvasImgBlob;
-
 
 //start video playback
 async function startVideoPlayback() {
@@ -60,7 +60,8 @@ function takePicture(event) {
     const height = video.offsetHeight;
     const canvas = new OffscreenCanvas(width, height);
     const context = canvas.getContext('2d');
-    context.drawImage(video, 0, 0, width, height);
+
+    addLocationToImage(context, video);
 
     canvas.convertToBlob({ type: 'image/jpeg' }).then(
         (blob) => {
@@ -75,6 +76,48 @@ function takePicture(event) {
 
     video.style.display = "none";
     photo.style.display = "block";
+}
+
+function addLocationToImage(context, video) {
+    const queryString = window.location.search;
+    const urlParams = new URLSearchParams(queryString);
+
+    latitude = urlParams.get("lat");
+    longitude = urlParams.get("lon");
+
+    console.log("Lat: ", latitude);
+    console.log("Lon: ", longitude);
+
+
+    context.drawImage(video, 0, 0, width, height);
+
+    const text = "Latitude: " + latitude + ", Longitude: " + longitude;
+
+    context.font = '16px Arial';
+    context.textAlign = 'center';
+    context.textBaseline = 'bottom';
+
+    const textMetrics = context.measureText(text);
+
+    const backgroundMargin = 2;
+    const backgroundWidth = textMetrics.width + 2 * backgroundMargin;
+    const backgroundHeight = 20;
+
+    context.fillStyle = 'rgba(255, 255, 255, 0.5)';
+    context.fillRect((width - backgroundWidth) / 2, height - backgroundHeight, backgroundWidth, backgroundHeight);
+
+    context.fillStyle = 'black';
+    context.fillText(text, width / 2, height - backgroundMargin, width);
+
+
+    /*
+    context.fillStyle = 'rgba(0, 255, 0, 0.5)';
+    context.beginPath();
+    context.moveTo(25, 25);
+    context.lineTo(105, 25);
+    context.lineTo(25, 105);
+    context.fill();
+     */
 }
 
 function toggleButtons(isPaused) {
@@ -107,19 +150,7 @@ playPauseButton.addEventListener("click", async function () {
 })
 
 saveButton.addEventListener("click", function () {
-    // save to local storage
-    const queryString = window.location.search;
-    const urlParams = new URLSearchParams(queryString);
-
-    latitude = urlParams.get("lat");
-    longitude = urlParams.get("lon");
-
-    console.log("Lat: ", latitude);
-    console.log("Lon: ", longitude);
-
     reader.readAsDataURL(canvasImgBlob);
-
-
 })
 
 cancelButton.addEventListener("click", function () {

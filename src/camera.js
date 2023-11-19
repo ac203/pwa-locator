@@ -139,10 +139,12 @@ playPauseButton.addEventListener("click", async function () {
 })
 
 saveButton.addEventListener("click", function () {
+    console.debug("Clicked save-button");
     reader.readAsDataURL(canvasImgBlob);
 })
 
 cancelButton.addEventListener("click", function () {
+    console.debug("Clicked cancel-button");
     location.href = "index.html";
 })
 

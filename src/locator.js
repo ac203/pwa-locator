@@ -17,12 +17,6 @@ const DEG_FORMATTER = Intl.NumberFormat('de-DE', { minimumFractionDigits: 1, max
 const LOCATION_ID = 'location';
 const CAMERA_INPUT_ID = 'camera';
 
-const cameraButton = document.getElementById(CAMERA_INPUT_ID);
-
-cameraButton.addEventListener("click", function () {
-    location.href = `camera.html?lat=${ll[0]}&lon=${ll[1]}`;
-})
-
 //map state
 var map;
 var ranger;
@@ -73,19 +67,12 @@ function updatePosition(position) {
         </dl>
     `;
     ll = [coords.latitude, coords.longitude];
-    localStorage.setItem("last-coords", JSON.stringify(ll));
-    console.debug(`New coordinates: ${ll}`);
+    console.debug(`New coordinates: ${ll[0]} + ${ll[1]}`);
 
     map.setView(ll);
 
     ranger.setLatLng(ll);
     ranger.setRadius(coords.accuracy);
-}
-
-function locate(position) {
-    const c = position.coords;
-    console.debug(
-        `my position: lat=${c.latitude} lng=${c.longitude}`);
 }
 
 function handleErr(err) {
@@ -94,6 +81,8 @@ function handleErr(err) {
 
 /* setup component */
 window.onload = () => {
+    const cameraButton = document.getElementById(CAMERA_INPUT_ID);
+
     //setup UI
     cameraButton.src = cameraImage;
 
@@ -129,17 +118,22 @@ window.onload = () => {
             updatePosition, handleErr, options);
     }
 
-    Object.keys(localStorage).forEach(function (key) {
-        let image = localStorage.getItem(key);
-        let location = key.split("x");
-        let marker = L.marker(location, {icon: markerIcon}).addTo(map);
+    cameraButton.addEventListener("click", function () {
+        location.href = `camera.html?lat=${ll[0]}&lon=${ll[1]}`;
+    })
 
-        marker.bindPopup(
-            "<img src=" + image + " width=100px>" +
-            "<p>" + location[0] + " " + location[1] + " </p>"
-        ).openPopup();
-    });
+    if (localStorage.length > 0) {
+        Object.keys(localStorage).forEach(function (key) {
+            let image = localStorage.getItem(key);
+            let location = key.split("x");
+            let marker = L.marker([location[0], location[1]], {icon: markerIcon}).addTo(map);
 
+            marker.bindPopup(
+                "<img src=" + image + " width=100px>" +
+                "<p>" + location[0] + " " + location[1] + " </p>"
+            ).openPopup();
+        });
+    }
 }
 
 window.onbeforeunload = (event) => {

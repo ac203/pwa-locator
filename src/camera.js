@@ -56,9 +56,9 @@ function adjustAspectRations(event) {
 video.addEventListener('canplay', adjustAspectRations, false);
 
 function takePicture(event) {
-    const width = video.offsetWidth;
-    const height = video.offsetHeight;
-    const canvas = new OffscreenCanvas(width, height);
+    const width = video.getAttribute("width");
+    const height = video.getAttribute("height");
+    const canvas = new OffscreenCanvas(parseInt(width), parseInt(height));
     const context = canvas.getContext('2d');
 
     addLocationToImage(context, video);
@@ -68,8 +68,8 @@ function takePicture(event) {
             canvasImgBlob = blob;
             const imageData = URL.createObjectURL(blob);
             console.log(imageData);
-            photo.width = width;
-            photo.height = height;
+            photo.width = parseInt(width);
+            photo.height = parseInt(height);
             photo.src = imageData;
         }
     );

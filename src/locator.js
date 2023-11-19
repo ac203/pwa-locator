@@ -138,7 +138,7 @@ window.onload = () => {
             "<img src=" + image + " width=100px>" +
             "<p>" + location[0] + " " + location[1] + " </p>"
         ).openPopup();
-    })
+    });
 
 }
 

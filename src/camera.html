@@ -3,20 +3,25 @@
 <head>
     <meta charset="utf-8" />
     <script src="camera.js" type="module"></script>
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+
     <link rel="stylesheet" href="camera.css">
 </head>
 
 <body>
-    <video id="video">Video stream not available.</video>
+    <div id="camera">
+        <video id="video">Video stream not available.</video>
 
-    <img id="photo" alt="The screen capture will appear in this box." />
-
+        <img id="photo" alt="The screen capture will appear in this box." />
+    </div>
     <div id="buttons">
         <input id="save" type="image" disabled="disabled">
         <input id="playPauseButton" type="image">
         <input id="cancel" type="image">
     </div>
-
-
 </body>
 </html>

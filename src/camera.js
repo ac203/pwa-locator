@@ -13,6 +13,7 @@ const photo = document.getElementById("photo");
 const playPauseButton = document.getElementById("playPauseButton");
 const saveButton = document.getElementById("save");
 const cancelButton = document.getElementById("cancel");
+const statusElement = document.getElementById("statusText");
 
 const reader = new FileReader();
 
@@ -124,6 +125,16 @@ function toggleButtons(isPaused) {
     }
 }
 
+function setStatus(text) {
+    setTimeout(function() {
+        // Deaktiviere die Anzeige nach 2 Sekunden (2000 Millisekunden)
+        statusElement.textContent = text;
+        setTimeout(function() {
+            statusElement.textContent = ""; // Leere den Text nach weiteren 2 Sekunden
+        }, 2000);
+    }, 0);
+}
+
 playPauseButton.addEventListener("click", async function () {
     console.debug("Clicked play-pause-button");
     if (!isPaused) {
@@ -131,16 +142,19 @@ playPauseButton.addEventListener("click", async function () {
         isPaused = true;
         toggleButtons(isPaused);
         takePicture();
+        setStatus("Video paused!")
     } else {
         await startVideoPlayback();
         isPaused = false;
         toggleButtons(isPaused);
+        setStatus("Video resumed!")
     }
 })
 
 saveButton.addEventListener("click", function () {
     console.debug("Clicked save-button");
     reader.readAsDataURL(canvasImgBlob);
+    setStatus("Image saved!")
 })
 
 cancelButton.addEventListener("click", function () {

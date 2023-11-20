@@ -145,7 +145,7 @@ saveButton.addEventListener("click", function () {
 
 cancelButton.addEventListener("click", function () {
     console.debug("Clicked cancel-button");
-    location.href = "index.html";
+    location.href = `index.html?lat=${latitude}&lon=${longitude}`;
 })
 
 window.onload = async () => {

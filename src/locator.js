@@ -95,9 +95,12 @@ window.onload = () => {
     let latitude = 47.406653;
     let longitude = 9.744844;
 
-    const urlParams = new URLSearchParams(windows.location.search);
-    const newLat = urlParams.get('lan');
+    const urlParams = new URLSearchParams(window.location.search);
+    const newLat = urlParams.get('lat');
     const newLon = urlParams.get('lon');
+
+    console.log("newLat", newLat);
+    console.log("newLon", newLon);
 
     if (!isNaN(newLat) && !isNaN(newLon)) {
         latitude = newLat;

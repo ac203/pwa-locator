@@ -50,6 +50,16 @@ div#buttons {
     justify-content: space-evenly;
 }
 
+div#status {
+    position: fixed;
+    top: 0;
+    width: 100%;
+}
+
+h3#statusText {
+    text-align: center;
+}
+
 @media only screen and (max-width: 600px) {
     body {
         display: flex;
@@ -62,6 +72,16 @@ div#buttons {
     div#buttons {
         position: fixed;
         bottom: 0;
+    }
+
+    div#status {
+        position: fixed;
+        top: 0;
+        width: 100%;
+    }
+
+    h3#statusText {
+        text-align: center;
     }
 
     input {

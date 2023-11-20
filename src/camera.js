@@ -155,6 +155,7 @@ saveButton.addEventListener("click", function () {
     console.debug("Clicked save-button");
     reader.readAsDataURL(canvasImgBlob);
     setStatus("Image saved!")
+    location.href = `index.html?lat=${latitude}&lon=${longitude}`;
 })
 
 cancelButton.addEventListener("click", function () {

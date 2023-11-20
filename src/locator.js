@@ -96,8 +96,8 @@ window.onload = () => {
     let longitude = 9.744844;
 
     const urlParams = new URLSearchParams(window.location.search);
-    const newLat = urlParams.get('lat');
-    const newLon = urlParams.get('lon');
+    const newLat = parseFloat(urlParams.get('lat'));
+    const newLon = parseFloat(urlParams.get('lon'));
 
     console.log("newLat", newLat);
     console.log("newLon", newLon);

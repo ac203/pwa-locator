@@ -74,7 +74,13 @@ function updatePosition(position) {
     ranger.setLatLng(ll);
     ranger.setRadius(coords.accuracy);
 }
-
+/*
+function locate(position) {
+    const c = position.coords;
+    console.debug(
+        `my position: lat=${c.latitude} lng=${c.longitude}`);
+}
+*/
 function handleErr(err) {
     console.error(err.message);
 }
@@ -86,11 +92,23 @@ window.onload = () => {
     //setup UI
     cameraButton.src = cameraImage;
 
+    let latitude = 47.406653;
+    let longitude = 9.744844;
+
+    const urlParams = new URLSearchParams(windows.location.search);
+    const newLat = urlParams.get('lan');
+    const newLon = urlParams.get('lon');
+
+    if (!isNaN(newLat) && !isNaN(newLon)) {
+        latitude = newLat;
+        longitude = newLon;
+    }
+
     //init leaflet
-    configureMap([47.406653, 9.744844]);
+    configureMap([latitude, longitude]);
 
     //init footer
-    updatePosition({ coords: { latitude: 47.406653, longitude: 9.744844, altitude: 440, accuracy: 40, heading: 45, speed: 1.8 } });
+    updatePosition({ coords: { latitude: latitude, longitude: longitude, altitude: 440, accuracy: 40, heading: 45, speed: 1.8 } });
 
     // setup service worker
     if ('serviceWorker' in navigator) {
